@@ -1,0 +1,33 @@
+# /etc/conf.d/theburningsavaged: config file for /etc/init.d/theburningsavaged
+
+# Config file location
+#THEBURNINGSAVAGED_CONFIGFILE="/etc/theburningsavage/theburningsavage.conf"
+
+# What directory to write pidfile to?  (created and owned by $THEBURNINGSAVAGED_USER)
+#THEBURNINGSAVAGED_PIDDIR="/var/run/theburningsavaged"
+
+# What filename to give the pidfile
+#THEBURNINGSAVAGED_PIDFILE="${THEBURNINGSAVAGED_PIDDIR}/theburningsavaged.pid"
+
+# Where to write theburningsavaged data (be mindful that the blockchain is large)
+#THEBURNINGSAVAGED_DATADIR="/var/lib/theburningsavaged"
+
+# User and group to own theburningsavaged process
+#THEBURNINGSAVAGED_USER="theburningsavage"
+#THEBURNINGSAVAGED_GROUP="theburningsavage"
+
+# Path to theburningsavaged executable
+#THEBURNINGSAVAGED_BIN="/usr/bin/theburningsavaged"
+
+# Nice value to run theburningsavaged under
+#THEBURNINGSAVAGED_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+#THEBURNINGSAVAGED_OPTS=""
+
+# The timeout in seconds OpenRC will wait for theburningsavaged to terminate
+# after a SIGTERM has been raised.
+# Note that this will be mapped as argument to start-stop-daemon's
+# '--retry' option, which means you can specify a retry schedule
+# here. For more information see man 8 start-stop-daemon.
+THEBURNINGSAVAGED_SIGTERM_TIMEOUT=60

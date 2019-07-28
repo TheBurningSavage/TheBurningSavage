@@ -1,0 +1,92 @@
+#!/sbin/openrc-run
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/theburningsavage/.theburningsavage" ]; then
+	THEBURNINGSAVAGED_DEFAULT_DATADIR="/var/lib/theburningsavage/.theburningsavage"
+else
+	THEBURNINGSAVAGED_DEFAULT_DATADIR="/var/lib/theburningsavaged"
+fi
+
+THEBURNINGSAVAGED_CONFIGFILE=${THEBURNINGSAVAGED_CONFIGFILE:-/etc/theburningsavage/theburningsavage.conf}
+THEBURNINGSAVAGED_PIDDIR=${THEBURNINGSAVAGED_PIDDIR:-/var/run/theburningsavaged}
+THEBURNINGSAVAGED_PIDFILE=${THEBURNINGSAVAGED_PIDFILE:-${THEBURNINGSAVAGED_PIDDIR}/theburningsavaged.pid}
+THEBURNINGSAVAGED_DATADIR=${THEBURNINGSAVAGED_DATADIR:-${THEBURNINGSAVAGED_DEFAULT_DATADIR}}
+THEBURNINGSAVAGED_USER=${THEBURNINGSAVAGED_USER:-${THEBURNINGSAVAGE_USER:-theburningsavage}}
+THEBURNINGSAVAGED_GROUP=${THEBURNINGSAVAGED_GROUP:-theburningsavage}
+THEBURNINGSAVAGED_BIN=${THEBURNINGSAVAGED_BIN:-/usr/bin/theburningsavaged}
+THEBURNINGSAVAGED_NICE=${THEBURNINGSAVAGED_NICE:-${NICELEVEL:-0}}
+THEBURNINGSAVAGED_OPTS="${THEBURNINGSAVAGED_OPTS:-${THEBURNINGSAVAGE_OPTS}}"
+
+name="TheBurningSavage Core Daemon"
+description="TheBurningSavage cryptocurrency P2P network daemon"
+
+command="/usr/bin/theburningsavaged"
+command_args="-pid=\"${THEBURNINGSAVAGED_PIDFILE}\" \
+		-conf=\"${THEBURNINGSAVAGED_CONFIGFILE}\" \
+		-datadir=\"${THEBURNINGSAVAGED_DATADIR}\" \
+		-daemon \
+		${THEBURNINGSAVAGED_OPTS}"
+
+required_files="${THEBURNINGSAVAGED_CONFIGFILE}"
+start_stop_daemon_args="-u ${THEBURNINGSAVAGED_USER} \
+			-N ${THEBURNINGSAVAGED_NICE} -w 2000"
+pidfile="${THEBURNINGSAVAGED_PIDFILE}"
+
+# The retry schedule to use when stopping the daemon. Could be either
+# a timeout in seconds or multiple signal/timeout pairs (like
+# "SIGKILL/180 SIGTERM/300")
+retry="${THEBURNINGSAVAGED_SIGTERM_TIMEOUT}"
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${THEBURNINGSAVAGED_USER}:${THEBURNINGSAVAGED_GROUP}" \
+	"${THEBURNINGSAVAGED_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${THEBURNINGSAVAGED_USER}:${THEBURNINGSAVAGED_GROUP}" \
+	"${THEBURNINGSAVAGED_PIDDIR}"
+
+	checkpath -f \
+	-o ${THEBURNINGSAVAGED_USER}:${THEBURNINGSAVAGED_GROUP} \
+	-m 0660 \
+	${THEBURNINGSAVAGED_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${THEBURNINGSAVAGED_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run theburningsavaged."
+		eerror "The setting must appear in ${THEBURNINGSAVAGED_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following "
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"TheBurningSavage Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}
