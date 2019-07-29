@@ -180,13 +180,13 @@ public:
 
         chainTxData = ChainTxData{
             // Data from rpc: getchaintxstats 4096 0000000000000000002e63058c023a9a1de233554f28c7b21380b6c9003f36a8
-            0, // * UNIX timestamp of last known number of transactions
+            1564346753, // * UNIX timestamp of last known number of transactions
             0,  // * total number of transactions between genesis and that timestamp
-            0         // * estimated number of transactions per second after that timestamp
+            0.02         // * estimated number of transactions per second after that timestamp
         };
 
         /* disable fallback fee on mainnet */
-        m_fallback_fee_enabled = false;
+        m_fallback_fee_enabled = true;
     }
 };
 
