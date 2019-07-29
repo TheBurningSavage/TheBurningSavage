@@ -119,18 +119,18 @@ public:
         nDefaultPort = 8333;
         nPruneAfterHeight = 100000;
 
-        genesis = CreateGenesisBlock(1564346753, 566 , 0x207fffff, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1564346753, 569 , 0x207fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-/*
-        std::cout << "MAINNET bitcash new hashGenesisBlock hash: " << genesis.GetHash().ToString() << std::endl;
+
+/*        std::cout << "MAINNET bitcash new hashGenesisBlock hash: " << genesis.GetHash().ToString() << std::endl;
 
         std::cout << "bitcash new hashMerkleRoot hash: " << genesis.hashMerkleRoot.ToString() << std::endl;
         std::cout << "Genesis Block Nonce: 0x" << genesis.nNonce << std::endl;
         std::cout << std::endl<< "bitcash new hashGenesisBlock hash: " << genesis.GetHash().ToString() << std::endl;
-
 */
 
-        assert(consensus.hashGenesisBlock == uint256S("0x1562a7472545771f95bbea99b15f5b5919f614a08e0e782468ee53ba56a65686"));
+
+        assert(consensus.hashGenesisBlock == uint256S("0x5085058c5a00dda6bb3140d796fe36cf7ac83548d1df7f83a6c167c3e2996aae"));
         assert(genesis.hashMerkleRoot == uint256S("0x509063d1580636225e73f65d82c87bfd5c2d20b76986e1745d31cb396e1e2115"));
 
         // Note that of those which support the service bits prefix, most only support a subset of
@@ -162,7 +162,7 @@ public:
 
         checkpointData = {
             {
-                { 0, uint256S("0x1562a7472545771f95bbea99b15f5b5919f614a08e0e782468ee53ba56a65686")},
+                { 0, uint256S("0x5085058c5a00dda6bb3140d796fe36cf7ac83548d1df7f83a6c167c3e2996aae")},
                 
                 
                 
