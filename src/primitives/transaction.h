@@ -133,6 +133,7 @@ class CTxOut
 public:
     CAmount nValue;
     CScript scriptPubKey;
+    bool ischange;
 
     CTxOut()
     {
@@ -147,12 +148,14 @@ public:
     inline void SerializationOp(Stream& s, Operation ser_action) {
         READWRITE(nValue);
         READWRITE(scriptPubKey);
+        READWRITE(ischange);
     }
 
     void SetNull()
     {
         nValue = -1;
         scriptPubKey.clear();
+        ischange = false;
     }
 
     bool IsNull() const
@@ -163,7 +166,8 @@ public:
     friend bool operator==(const CTxOut& a, const CTxOut& b)
     {
         return (a.nValue       == b.nValue &&
-                a.scriptPubKey == b.scriptPubKey);
+                a.scriptPubKey == b.scriptPubKey &&
+                a.ischange == b.ischange);
     }
 
     friend bool operator!=(const CTxOut& a, const CTxOut& b)
@@ -318,6 +322,7 @@ public:
 
     // Return sum of txouts.
     CAmount GetValueOut() const;
+    CAmount GetValueOutDeflation() const;
     // GetValueIn() is a method on CCoinsViewCache, because
     // inputs must be known to compute value in.
 

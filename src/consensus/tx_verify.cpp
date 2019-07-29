@@ -220,6 +220,20 @@ bool Consensus::CheckTxInputs(const CTransaction& tx, CValidationState& state, c
         const Coin& coin = inputs.AccessCoin(prevout);
         assert(!coin.IsSpent());
 
+        if (i == 0) {
+            //check if outputs with change indeed pay to the same address as the first transaction input
+            for (unsigned int j = 0; j < tx.vout.size(); ++j) {
+                if (tx.vout[j].ischange)
+                {
+                    if (tx.vout[j].scriptPubKey != coin.out.scriptPubKey) {
+                        return state.Invalid(false,
+                            REJECT_INVALID, "bad-txns-change-txout-is-no-change",
+                            "A transaction output which is marked as change does not pay to the same scriptpubkey as the first transaction input");    
+                    }
+                }
+            }
+        }
+
         // If prev is coinbase, check that it's matured
         if (coin.IsCoinBase() && nSpendHeight - coin.nHeight < COINBASE_MATURITY) {
             return state.Invalid(false,
@@ -235,8 +249,9 @@ bool Consensus::CheckTxInputs(const CTransaction& tx, CValidationState& state, c
     }
 
     const CAmount value_out = tx.GetValueOut();
+    const CAmount value_outdeflation = tx.GetValueOutDeflation();
     //check that 1% deflation
-    if ((!iscoinbase && nValueIn * 99 / 100 < value_out) || (iscoinbase && nValueIn < value_out)) {
+    if ((!iscoinbase && nValueIn * 99 / 100 < value_outdeflation) || (iscoinbase && nValueIn < value_out)) {
         return state.DoS(100, false, REJECT_INVALID, "bad-txns-in-belowout", false,
             strprintf("value in (%s) < value out (%s)", FormatMoney(nValueIn), FormatMoney(value_out)));
     }
@@ -244,7 +259,7 @@ bool Consensus::CheckTxInputs(const CTransaction& tx, CValidationState& state, c
     CAmount txfee_aux = nValueIn - value_out;
     if (!iscoinbase) 
     {
-        txfee_aux = (__int128_t)nValueIn * 99 /100 - value_out;//the burned coins are not transaction fee
+        txfee_aux = (__int128_t)nValueIn * 99 /100 - value_outdeflation;//the burned coins are not transaction fee
     }
     if (!MoneyRange(txfee_aux)) {
         return state.DoS(100, false, REJECT_INVALID, "bad-txns-fee-outofrange");

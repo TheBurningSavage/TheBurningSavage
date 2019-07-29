@@ -1366,6 +1366,9 @@ bool CWallet::IsChange(const CTxOut& txout) const
         LOCK(cs_wallet);
         if (!mapAddressBook.count(address))
             return true;
+
+        if (txout.ischange)
+            return true;
     }
     return false;
 }
@@ -2853,6 +2856,7 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CTransac
                 {
                     // Fill a vout to ourself
                     CTxOut newTxOut(nChange, scriptChange);
+                    newTxOut.ischange = true;
 
                     // Never create dust outputs; if we would, just
                     // add the dust to the fee.
@@ -2866,8 +2870,8 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CTransac
                     {
                         if (nChangePosInOut == -1)
                         {
-                            // Insert change txn at random position:
-                            nChangePosInOut = GetRandInt(txNew.vout.size()+1);
+                            // Insert change txn at position 0
+                            nChangePosInOut = 0;
                         }
                         else if ((unsigned int)nChangePosInOut > txNew.vout.size())
                         {
@@ -2975,10 +2979,10 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CTransac
         }
 
         for (unsigned i = 0; i < txNew.vout.size(); i++) {
-            txNew.vout[i].nValue = (__int128_t)txNew.vout[i].nValue * 99 / 100;//1 % deflation
+            if (!txNew.vout[i].ischange) {
+                txNew.vout[i].nValue = (__int128_t)txNew.vout[i].nValue * 99 / 100;//1 % deflation
+            }
         }
-
-        if (nChangePosInOut == -1) reservekey.ReturnKey(); // Return any reserved key if we don't have change
 
         // Shuffle selected coins and fill in final vin
         txNew.vin.clear();
@@ -2994,9 +2998,20 @@ bool CWallet::CreateTransaction(const std::vector<CRecipient>& vecSend, CTransac
         // and in the spirit of "smallest possible change from prior
         // behavior."
         const uint32_t nSequence = coin_control.m_signal_bip125_rbf.get_value_or(m_signal_rbf) ? MAX_BIP125_RBF_SEQUENCE : (CTxIn::SEQUENCE_FINAL - 1);
+        int i = 0;
+        bool replacedchangekey = false;
         for (const auto& coin : selected_coins) {
             txNew.vin.push_back(CTxIn(coin.outpoint, CScript(), nSequence));
+            if (i == 0 && nChangePosInOut == 0) {
+                //return change to the address of the first input so that we can identify which output is the change 
+                //(so that you will not pay the 1% deflation fee for the change)
+                txNew.vout[0].scriptPubKey = coin.txout.scriptPubKey;
+                replacedchangekey = true;
+            }
+            i++;
         }
+
+        if (nChangePosInOut == -1 || replacedchangekey) reservekey.ReturnKey(); // Return any reserved key if we don't have change
 
         if (sign)
         {

@@ -119,10 +119,19 @@ public:
         nDefaultPort = 8333;
         nPruneAfterHeight = 100000;
 
-        genesis = CreateGenesisBlock(1564346753, 462 , 0x207fffff, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1564346753, 566 , 0x207fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x00c620919cd224a316b8cf1c85ccd0e785e7b022c0be1656571e6debda0a7d00"));
-        assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
+/*
+        std::cout << "MAINNET bitcash new hashGenesisBlock hash: " << genesis.GetHash().ToString() << std::endl;
+
+        std::cout << "bitcash new hashMerkleRoot hash: " << genesis.hashMerkleRoot.ToString() << std::endl;
+        std::cout << "Genesis Block Nonce: 0x" << genesis.nNonce << std::endl;
+        std::cout << std::endl<< "bitcash new hashGenesisBlock hash: " << genesis.GetHash().ToString() << std::endl;
+
+*/
+
+        assert(consensus.hashGenesisBlock == uint256S("0x1562a7472545771f95bbea99b15f5b5919f614a08e0e782468ee53ba56a65686"));
+        assert(genesis.hashMerkleRoot == uint256S("0x509063d1580636225e73f65d82c87bfd5c2d20b76986e1745d31cb396e1e2115"));
 
         // Note that of those which support the service bits prefix, most only support a subset of
         // possible options.
@@ -153,7 +162,7 @@ public:
 
         checkpointData = {
             {
-                { 0, uint256S("0x00c620919cd224a316b8cf1c85ccd0e785e7b022c0be1656571e6debda0a7d00")},
+                { 0, uint256S("0x1562a7472545771f95bbea99b15f5b5919f614a08e0e782468ee53ba56a65686")},
                 
                 
                 
@@ -230,8 +239,16 @@ public:
 
         genesis = CreateGenesisBlock(1564346752, 270 , 0x207fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x00c3e8802606c8368a583952f46dff25abf22a53bd14987d42f4d80b86991fe6"));
-        assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
+/*
+        std::cout << "TESTNET bitcash new hashGenesisBlock hash: " << genesis.GetHash().ToString() << std::endl;
+
+        std::cout << "bitcash new hashMerkleRoot hash: " << genesis.hashMerkleRoot.ToString() << std::endl;
+        std::cout << "Genesis Block Nonce: 0x" << genesis.nNonce << std::endl;
+        std::cout << std::endl<< "bitcash new hashGenesisBlock hash: " << genesis.GetHash().ToString() << std::endl;
+*/
+
+        assert(consensus.hashGenesisBlock == uint256S("0x2dfa9545319f8c9e0da694d5d57a8e5ccecc3e0dd2f532ff0c3b875d641209b4"));
+        assert(genesis.hashMerkleRoot == uint256S("0x509063d1580636225e73f65d82c87bfd5c2d20b76986e1745d31cb396e1e2115"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
@@ -258,7 +275,7 @@ public:
 
         checkpointData = {
             {
-                { 0, uint256S("0x00c3e8802606c8368a583952f46dff25abf22a53bd14987d42f4d80b86991fe6")},
+                { 0, uint256S("0x2dfa9545319f8c9e0da694d5d57a8e5ccecc3e0dd2f532ff0c3b875d641209b4")},
             }
         };
 
@@ -317,10 +334,20 @@ public:
         nDefaultPort = 18444;
         nPruneAfterHeight = 1000;
 
-        genesis = CreateGenesisBlock(1564346751, 838 , 0x207fffff, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1564346751, 808 , 0x207fffff, 1, 50 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x004ada5463efc9819c1f5ed33e80585674367faaa9317396856193de37712463"));
-        assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
+
+/*
+        std::cout << "REGTEST bitcash new hashGenesisBlock hash: " << genesis.GetHash().ToString() << std::endl;
+
+        std::cout << "bitcash new hashMerkleRoot hash: " << genesis.hashMerkleRoot.ToString() << std::endl;
+        std::cout << "Genesis Block Nonce: 0x" << genesis.nNonce << std::endl;
+        std::cout << std::endl<< "bitcash new hashGenesisBlock hash: " << genesis.GetHash().ToString() << std::endl;
+*/
+
+
+        assert(consensus.hashGenesisBlock == uint256S("0x1bc6785123c4fbe1a2f375a693bb3c2d057afd8fe66cd0b0869d3e24f21785a0"));
+        assert(genesis.hashMerkleRoot == uint256S("0x509063d1580636225e73f65d82c87bfd5c2d20b76986e1745d31cb396e1e2115"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();      //!< Regtest mode doesn't have any DNS seeds.
@@ -331,7 +358,7 @@ public:
 
         checkpointData = {
             {
-                { 0, uint256S("0x004ada5463efc9819c1f5ed33e80585674367faaa9317396856193de37712463")},
+                { 0, uint256S("0x1bc6785123c4fbe1a2f375a693bb3c2d057afd8fe66cd0b0869d3e24f21785a0")},
             }
         };
 

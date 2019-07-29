@@ -47,6 +47,7 @@ CTxOut::CTxOut(const CAmount& nValueIn, CScript scriptPubKeyIn)
 {
     nValue = nValueIn;
     scriptPubKey = scriptPubKeyIn;
+    ischange = false;
 }
 
 std::string CTxOut::ToString() const
@@ -85,6 +86,22 @@ CAmount CTransaction::GetValueOut() const
     CAmount nValueOut = 0;
     for (const auto& tx_out : vout) {
         nValueOut += tx_out.nValue;
+        if (!MoneyRange(tx_out.nValue) || !MoneyRange(nValueOut))
+            throw std::runtime_error(std::string(__func__) + ": value out of range");
+    }
+    return nValueOut;
+}
+
+CAmount CTransaction::GetValueOutDeflation() const
+{
+    CAmount nValueOut = 0;
+    for (const auto& tx_out : vout) {
+        if (tx_out.ischange)
+        {
+            nValueOut += (__int128_t)tx_out.nValue * 99 /100;
+        } else {
+            nValueOut += tx_out.nValue;
+        }
         if (!MoneyRange(tx_out.nValue) || !MoneyRange(nValueOut))
             throw std::runtime_error(std::string(__func__) + ": value out of range");
     }
