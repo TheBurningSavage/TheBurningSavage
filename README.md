@@ -1,3 +1,7 @@
+https://theburningsavage.com/
+
+https://discord.gg/SNaKA9a
+
 TheBurningSavage Core integration/staging tree
 =====================================
 
