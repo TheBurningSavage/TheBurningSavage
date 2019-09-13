@@ -309,7 +309,14 @@ crypto_libtheburningsavage_crypto_base_a_SOURCES = \
   crypto/sha256.cpp \
   crypto/sha256.h \
   crypto/sha512.cpp \
-  crypto/sha512.h
+  crypto/sha512.h \
+  crypto/yespower.h \
+  crypto/yespower.c \
+  crypto/sha256_yespower.h \
+  crypto/sha256_yespower.c \
+  crypto/sysendian.h \
+  crypto/yespower-platform_c.h \
+  crypto/yespower-opt.c
 
 if USE_ASM
 crypto_libtheburningsavage_crypto_base_a_SOURCES += crypto/sha256_sse4.cpp
